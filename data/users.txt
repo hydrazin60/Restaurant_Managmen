@@ -1,0 +1,4 @@
+104,khemraj,khemrajRokaya12,khemraj@gmail.com,password,Customer
+105,rojina pujara,roji201,roji@gmail.com,password,Customer
+106,rich dulal,roch20,richa@gmail.com,password,Customer
+107,dina tamang,dina20,dinatamang@gmail.com,password,Customer
