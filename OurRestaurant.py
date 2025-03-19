@@ -31,7 +31,7 @@ def get_next_user_id(file_path):
     return int(last_id_str) + 1  
 
 def register():
-    print("\n------------------------------- Registration -------------------------------------\n")
+    print("\n------------------------------- Registration form -------------------------------------\n")
     full_name = input("Enter your Full Name: ")
     username = input("Enter a username: ")
     email = input("Enter your email: ")

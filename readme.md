@@ -12,7 +12,7 @@ The Restaurant Management System is a Python-based application designed to handl
 2. **Enter the command**
    python OurRestaurant.py  //
    python3 OurRestaurant.py   
-   ( OurRestaurant is the main file in our project )
+  ( OurRestaurant is the main file in our project )
 2. **Login/Register Page show**
 -  **Registration Process
 If you’re not registered:
