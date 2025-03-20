@@ -1,7 +1,6 @@
 import os
 import atexit
-
-# Directory and file paths
+ 
 DATA_DIRECTORY = "./data"
 USER_FILE = os.path.join(DATA_DIRECTORY, "users.txt")
 STAFF_FILE = os.path.join(DATA_DIRECTORY, "staff.txt")

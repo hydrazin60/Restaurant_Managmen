@@ -1,4 +1,6 @@
 import os
+from collections import defaultdict
+from tabulate import tabulate
 
 # File paths
 STAFF_FILE = os.path.join("data", "staff.txt")
@@ -6,8 +8,15 @@ SALES_FILE = os.path.join("data", "sales.txt")
 FEEDBACK_FILE = os.path.join("data", "feedback.txt")
 USER_FILE = os.path.join( "data", "users.txt")
 LOGIN_USER_DATA = os.path.join("data", "login_User_data.txt")
+FEEDBACK_FILE = os.path.join("data", "feedback.txt")
+SALES_DATA = os.path.join("data", "orders.txt")
  
+def clear_screen():
+    """Clears the terminal screen."""
+    os.system("cls" if os.name == "nt" else "clear")
+
 def admin_menu():
+    clear_screen()
     while True:
         print("\n---------Admin Menu:---------\n")
         print("1. Manage Staff")
@@ -148,6 +157,63 @@ def view_staff():
                 staff_id, name, username, email, password, role = staff_data
                 print(f"{i:<5} {staff_id:<5} {name:<20} {username:<15} {email:<25} {role:<10}")
 
+def view_feedback():
+    print("\n-----------Feedback List:-------\n")
+     
+    if not os.path.exists(FEEDBACK_FILE):
+        print("No feedback found.")
+        return
+     
+    print(f"{'No.':<5} {'ID':<5} {'Name':<20} {'Email':<25} {'Role':<10} {'Feedback':<10}")
+    print("-" * 80)
+     
+    with open(FEEDBACK_FILE, "r") as f:
+        for i, line in enumerate(f, start=1):
+            feedback_data = line.strip().split(",")
+            if len(feedback_data) == 5:   
+                feedback_id, name, email, role, feedback = feedback_data
+                print(f"{i:<5} {feedback_id:<5} {name:<20} {email:<25} {role:<10} {feedback:<10}")
+            else:
+                print(f"feedback on line {i}: {line.strip()}")             
+
+
+
+ 
+def view_sales_report():
+    print("\n----------- Daily Sales Report (Completed Orders) -----------\n")
+
+    if not os.path.exists(SALES_DATA):  # Check if file exists
+        print("No sales found.")
+        return 
+
+    sales = []
+    total_price = 0
+
+    with open(SALES_DATA, "r") as f:
+        for line in f:
+            data = line.strip().split(",")  # Split CSV format
+            if len(data) < 9:   
+                continue  
+
+            username, role, table, item, price, category, quantity, total, status = data
+            
+            # **Filter only "Completed" sales**
+            if status.strip().lower() == "completed":  
+                sales.append([username, table, item, price, category, quantity, total, status])
+                total_price += int(total)  # Sum only completed orders
+
+    if sales:
+        headers = ["Customer", "itemID", "Item", "Price", "Category", "Qty", "Total", "Status"]
+        print(tabulate(sales, headers=headers, tablefmt="grid"))
+        print("\nTotal Sales Amount (Completed Orders): Rs.", total_price)
+    else:
+        print("No completed sales found.")
+
+ 
+
+ 
+
+  
 def Update_own_profile():
     if not os.path.exists(LOGIN_USER_DATA):
         print("You are not logged in.")
