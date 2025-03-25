@@ -1,0 +1,5 @@
+Richa Dulal,Customer,M3,Samosa,30,veg,5,90,Pending
+richadulal20,Customer,M8,Sekuwa,80,,2,240,Pending
+shristy77,Customer,M6,milk tea,35,drinks,4,140,Pending
+shristy77,Customer,M7,buf momo,120,buffet,4,480,Completed
+Richa Dulal,Customer,M3,Samosa,30,veg,5,90,Pending

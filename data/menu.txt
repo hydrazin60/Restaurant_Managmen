@@ -1,3 +1,0 @@
-M1,sahavlaw,120,veg
-M2,chaumin,130,non-veg
-M3,momo,130,veg

@@ -1,0 +1,4 @@
+100,jiban pandey,jiban2060,samir2060@gmail.com,password,Admin
+102,Bijaya kumar dash,bijaya2060,bijaya2060@gmail.com,password,Chef
+103,suresh shahi,pawan98,pawanpandey98@gmail.com,@password2060@,Manager
+104,pandey Bipana,Bipana61,bipanapandey61@gmail.com,@password2060@,Chef

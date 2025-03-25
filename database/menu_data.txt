@@ -1,0 +1,7 @@
+M1,momo,120,veg
+M2,Chowmmein,100,veg
+M3,Samosa,30,snacks
+M5,Aloo Chop,60,snacks
+M6,milk tea,35,drinks
+M7,buf momo,120,buffet
+M8,Sekuwa,80,buffet

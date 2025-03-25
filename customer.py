@@ -1,22 +1,21 @@
 import os
 import re
 from tabulate import tabulate
-MENU_FILE = os.path.join("data", "menu.txt")
-ORDERS_FILE = os.path.join("data", "orders.txt")
-FEEDBACK_FILE = os.path.join("data", "feedback.txt")
-LOGIN_USER_DATA = os.path.join("data", "login_User_data.txt")
-USER_FILE_Data = os.path.join("data", "users.txt")
+MENU_FILE = os.path.join("database", "menu_data.txt")
+ORDERS_FILE = os.path.join("database", "orders_data.txt")
+FEEDBACK_FILE = os.path.join("database", "feedback_data.txt")
+LOGIN_USER_DATA = os.path.join("cookies", "login_User_data.txt")
+USER_FILE_Data = os.path.join("database", "users_data.txt")
 from OurRestaurant import main
 
 
-def clear_screen():
-    """Clears the terminal screen."""
-    os.system("cls" if os.name == "nt" else "clear")
+# def clear_screen():
+#     """Clears the terminal screen."""
+#     os.system("cls" if os.name == "nt" else "clear")
 
 # Customer menu
 def customer_menu():
     while True:
-        clear_screen()
         print("\nCustomer Menu:")
         print("1. View Menu")
         print("2. Order Menu")
@@ -29,7 +28,6 @@ def customer_menu():
         elif choice == "2":
             order()
         elif choice == "3":
-            clear_screen()
             send_feedback()
         elif choice == "4":
              Update_own_profile()
@@ -412,8 +410,8 @@ def update_order():
         print(f"\nCurrent Orders for {logged_in_user}:")
         table_data = []
         for i, order in enumerate(user_orders): 
-            table_data.append([i + 1, order[3], order[4], order[5], order[6], order[7]])  # Corrected fields
-        print(tabulate(table_data, headers=["No.", "Item", "Price", "Category", "Num of order", "Status"], tablefmt="grid"))
+            table_data.append([i + 1, order[3], order[4], order[5], order[6], order[8] , order[7]])  # Corrected fields
+        print(tabulate(table_data, headers=["No.", "Item", "Price", "Category", "Num of order", "Status","Total Price"], tablefmt="grid"))
         
         try:
             order_index = int(input("Enter the number of the order to update: ")) - 1  # Get the order index

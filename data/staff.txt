@@ -1,5 +1,0 @@
-101,Sagar thapa,sagar(kaji),tahapakaji200@gmail.com,password,Chef
-102,pawan,nisankhadka200,nisankhadka200@gmail.com,password,Manager
-103,rina pandey,rosanaBaral20,rosanbaral20@gmail.com,password,Chef
-104,pawan pandey,jiban2060,pandeyjiban2060@gmail.com,password,Admin
-105,Biraj,biraj11,biraj@gmail.com,password,Admin

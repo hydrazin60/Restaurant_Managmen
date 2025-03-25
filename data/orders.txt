@@ -1,3 +1,0 @@
-khemrajRokaya12,Customer,M2,chaumin,130,non-veg,3,390,Completed
-khemrajRokaya12,Customer,M3,momo,130,veg,2,260,Pending
-khemrajRokaya12,Customer,M2,chaumin,130,non-veg,4,520,Completed

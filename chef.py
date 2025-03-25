@@ -1,12 +1,12 @@
 import os
 from tabulate import tabulate
 import re
-ORDERS_FILE = os.path.join("data", "orders.txt")
-INGREDIENTS_FILE = os.path.join("data", "ingredients.txt")
-CUSTOMER_DATA = os.path.join("data", "users.txt")
-STAFF_DATA = os.path.join("data", "staff.txt")
-REQUEST_Ingredient = os.path.join("data" , "Req_ingredients.txt")
-LOGIN_USER_DATA = os.path.join("data" , "login_User_data.txt")
+ORDERS_FILE = os.path.join("database", "orders_data.txt")
+INGREDIENTS_FILE = os.path.join("database", "ingredients_data.txt")
+CUSTOMER_DATA = os.path.join("database", "users_data.txt")
+STAFF_DATA = os.path.join("database", "staff_data.txt")
+REQUEST_Ingredient = os.path.join("database" , "Req_ingredients_data.txt")
+LOGIN_USER_DATA = os.path.join("cookies" , "login_User_data.txt")
 from OurRestaurant import main
 
 
@@ -45,6 +45,7 @@ def order():
         chef_menu()
     else :
         print(" Invalid choice")        
+     
 
 def ingredients ():
     print("\n-------------- ingredients Menu ----------\n")
@@ -160,27 +161,28 @@ def update_order_status():
         if continue_update != 'y':
             break
 
+
+from tabulate import tabulate
+
 def view_all_ingredients():
     """View all ingredient requests in table format."""
     print("\n-------- Ingredient Requests --------")
-    
+
     try:
         with open(INGREDIENTS_FILE, "r") as f:
-            ingredients = f.readlines()
-            
+            ingredients = [line.strip().split(",") for line in f.readlines()]
+
         if not ingredients:
             print("No ingredient requests found.")
             return
-         
-        print(f"{'ID':<10} {'Ingredient':<20} {'Quantity':<10} {'Unit':<10} {'Category':<15}")
-        print("-" * 65)
-         
-        for line in ingredients:
-            data = line.strip().split(",")
-            if len(data) == 5:  
-                ingredient_id, ingredient, quantity, unit, category = data
-                print(f"{ingredient_id:<10} {ingredient:<20} {quantity:<10} {unit:<10} {category:<15}")
-    
+        print(ingredients)
+        max_columns = max(len(row) for row in ingredients)
+        headers = ["ID", "Ingredient", "Quantity", "Unit", "Category"]
+        if max_columns > len(headers):
+            headers.extend([f"Extra_{i}" for i in range(1, max_columns - len(headers) + 1)])
+        formatted_data = [row + ["N/A"] * (max_columns - len(row)) for row in ingredients]
+        print(tabulate(formatted_data, headers=headers, tablefmt="grid"))
+
     except FileNotFoundError:
         print("Ingredient file not found.")
 

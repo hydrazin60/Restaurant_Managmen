@@ -3,14 +3,14 @@ from collections import defaultdict
 from tabulate import tabulate
 
 # File paths
-STAFF_FILE = os.path.join("data", "staff.txt")
-SALES_FILE = os.path.join("data", "sales.txt")
-FEEDBACK_FILE = os.path.join("data", "feedback.txt")
-USER_FILE = os.path.join( "data", "users.txt")
-LOGIN_USER_DATA = os.path.join("data", "login_User_data.txt")
-FEEDBACK_FILE = os.path.join("data", "feedback.txt")
-SALES_DATA = os.path.join("data", "orders.txt")
- 
+STAFF_FILE = os.path.join("database", "staff_data.txt")
+SALES_FILE = os.path.join("database", "sales_data.txt")
+FEEDBACK_FILE = os.path.join("database", "feedback_data.txt")
+USER_FILE = os.path.join( "database", "users_data.txt")
+LOGIN_USER_DATA = os.path.join("cookies", "login_User_data.txt")
+SALES_DATA = os.path.join("database", "orders_data.txt")
+FEEDBACK_FILE = os.path.join("database", "ingredients_data.txt")
+
 def clear_screen():
     """Clears the terminal screen."""
     os.system("cls" if os.name == "nt" else "clear")
@@ -209,16 +209,11 @@ def view_sales_report():
     else:
         print("No completed sales found.")
 
- 
-
- 
-
   
 def Update_own_profile():
     if not os.path.exists(LOGIN_USER_DATA):
         print("You are not logged in.")
         return
- 
     with open(LOGIN_USER_DATA, "r") as f:
         login_data = f.read().strip().split(",")
         logged_username = login_data[0]
@@ -237,14 +232,14 @@ def Update_own_profile():
             break
 
     if not staff_to_edit:
-        print("Staff member not found.")
+        print("________________Your profile not found_________________.")
         return
 
-    print("\n-------- Edit Your Profile: --------\n")
+    print("\n ˜”*°•.˜”*°• Edit Your Profile: •°*”˜.•°*”˜ \n")
     staff_id, name, username, email, password, role = staff_to_edit
 
     # Display current details
-    print(f"\nCurrent Profile Details: ")
+    print(f"\n ---------- Your Current Details ---- \n")
     print(f"Name: {name}")
     print(f"Username: {username}")
     print(f"Email: {email}")
@@ -291,8 +286,7 @@ def edit_staff():
     if not staff_list:
         print("No staff found.")
         return
-
-    # Display current staff in table format
+ 
     print("\n--------- Current Staff: ----------\n")
     print(f"{'No.':<5} {'ID':<5} {'Name':<20} {'Username':<15} {'Email':<25} {'Role':<10}")
     print("-" * 80)
@@ -302,19 +296,18 @@ def edit_staff():
         print(f"{i + 1:<5} {staff_id:<5} {name:<20} {username:<15} {email:<25} {role:<10}")
 
     try:
-        # Ask for the staff member to edit
+     
         staff_index = int(input("\nEnter the number of the staff to edit: ")) - 1
         if staff_index < 0 or staff_index >= len(staff_list):
             print("Invalid selection.")
             return
-        # Get the current staff details
+       
         current_staff = staff_list[staff_index]
         staff_id, name, username, email, password, role = current_staff
-        # Update name
+      
         is_update_name = input("Do you want to update staff name (y/n): ").strip().lower()
         if is_update_name == "y":
             name = input("Enter new name: ")
-        # Update username
         is_update_username = input("Do you want to update username (y/n): ").strip().lower()
         if is_update_username == "y":
             username = input("Enter new username: ")

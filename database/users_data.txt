@@ -1,0 +1,4 @@
+2,dular Richa,richadulal20,richa20@gmail.com,password,Customer
+3,shristi tmelsina,shristy77,shristy@gmail.com,password,Customer
+4,Nisan khadka,nisan30,nisankhadka@gmail.com,password,Customer
+5,Richa,richadulal,Richa12@gmail.com,Richa123,Customer

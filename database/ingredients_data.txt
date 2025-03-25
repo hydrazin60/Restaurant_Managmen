@@ -1,0 +1,11 @@
+I1,Buffalo Meat (Buff),2,kg,meat
+I2,Onion,4,kg,vegetable,None
+I3,Garlic,1,kg,vegetable
+I4,Milk,1,ltr,dairy,Suddanepalimilk
+I5,Sugar,10,kg,spice,Karnali
+I2,sugar,50,kg,spice,Butwal
+I1,chamal,20,kg,vegetable,Marsi
+I1,milk,3,ltr,dairy,Vhaktapur Dery
+I1,dal,50,kg,vegetable,Karnali
+I1,vesitible oil,5,ltr,vegetable,Sun Flower
+I2,Cheese,2,kg,dairy,None

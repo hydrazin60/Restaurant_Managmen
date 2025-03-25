@@ -1,19 +1,18 @@
 import os
 import re
-
-CUSTOMERS_FILE = os.path.join("data", "customers.txt")
-MENU_FILE = os.path.join("data", "menu.txt")
-INGREDIENTS_FILE = os.path.join("data", "ingredients.txt")
-Staff_FILE = os.path.join("data", "staff.txt")
-User_FILE = os.path.join("data", "users.txt")
-LOGIN_USER_DATA = os.path.join("data", "login_User_data.txt")
+CUSTOMERS_FILE = os.path.join("database", "customers.txt")
+MENU_FILE = os.path.join("database", "menu_data.txt")
+INGREDIENTS_FILE = os.path.join("database", "ingredients_data.txt")
+Staff_FILE = os.path.join("database", "staff_data.txt")
+User_FILE = os.path.join("database", "users_data.txt")
+LOGIN_USER_DATA = os.path.join("cookies", "login_User_data.txt")
+REQUEST_Ingredient  = os.path.join("database" , "Req_ingredients_data.txt" )
 from OurRestaurant import main
-
 from tabulate import tabulate
-
-
-# Manager menu
+ 
+ 
 def manager_menu():
+    print("\n-------------------- Manager Menu --------------------\n")
     while True:
         print("\nManager Menu:")
         print("1. Manage Customers")
@@ -479,7 +478,8 @@ def manage_ingredients():
         print("2. Upload New Ingredient")
         print("3. Delete Ingredient")
         print("4 . Update Ingredient")
-        print("5. Go Back")
+        print("5. View / Update Ingredients Requests of Chef ")
+        print("6. Go Back")
 
         choice = input("Enter your choice: ").strip()
 
@@ -492,6 +492,8 @@ def manage_ingredients():
         elif choice == "4":
             update_ingredient()
         elif choice == "5":
+             View_AND_Update_Ingredients_Requests_of_Chef()
+        elif choice == "6":
             break
         else:
             print("Invalid choice. Please try again.")
@@ -536,10 +538,7 @@ def extract_quantity_and_unit(quantity_input):
     if match:
         return match.group(1), match.group(2)  # Return number & unit separately
     return None, None   
-
  
-
-# Function to generate the next unique ingredient ID
 def get_next_ingredient_id():
     # Assuming ingredients start from 'I1' and are incremented sequentially
     with open(INGREDIENTS_FILE, "r") as f:
@@ -548,8 +547,6 @@ def get_next_ingredient_id():
         last_num = int(last_id[1:])  # Extract number from ID (e.g., I3 -> 3)
         new_id = f"I{last_num + 1}"
     return new_id
-
-
  
 def get_next_ingredient_id():
     """Generates the next unique ingredient ID."""
@@ -580,7 +577,7 @@ def upload_ingredients():
     """Uploads a new ingredient with a unique ID."""
     print("\n-------- Upload New Ingredient --------\n")
 
-    ingredient_id = get_next_ingredient_id()  # Get unique ID
+    ingredient_id = get_next_ingredient_id() 
     ingredient_name = input("Enter ingredient name: ").strip().title()
 
     while True:
@@ -625,50 +622,262 @@ def view_ingredients():
     # Display in table format
     print(tabulate(ingredient_list, headers=["ID", "Name", "Quantity", "Type", "Brand"], tablefmt="grid"))
 
+
+def extract_quantity_and_unit(quantity_input):
+    match = re.match(r'(\d+(\.\d+)?)([a-zA-Z]+)', quantity_input)
+    if match:
+        quantity = match.group(1)  # Extract quantity number
+        unit = match.group(3)      # Extract unit (e.g., 'kg', 'ltr')
+        return quantity, unit
+    return None, None
+
+
+# def View_AND_Update_Ingredients_Requests_of_Chef():
+#     """View and update ingredient requests for the chef in a tabular format."""
+#     print("\n-------- Ingredient Requests --------")
+
+#     try:
+#         # Read all requests from the file
+#         with open(REQUEST_Ingredient, "r") as file:
+#             ingredient_requests = [line.strip().split(",") for line in file.readlines()]
+
+#         if not ingredient_requests:
+#             print("No ingredient requests found.")
+#             return
+
+#         # Ensure each request has exactly 5 values, fill missing fields with default values
+#         cleaned_requests = []
+#         for req in ingredient_requests:
+#             if len(req) == 3:  # If only ingredient, quantity, unit are present
+#                 req.extend(["N/A", ""])  # Add default values for status and extra_1
+#             elif len(req) == 4:  # If ingredient, quantity, unit, and status are present
+#                 req.append("N/A")  # Add default value for extra_1
+#             elif len(req) == 5:
+#                 pass  # Already has 5 values, no change needed
+#             else:
+#                 print(f"Warning: Skipping invalid line with {len(req)} values: {req}")
+#                 continue  # Skip the line if it doesn't have 3, 4, or 5 values
+#             cleaned_requests.append(req)
+
+#         # Prepare data for tabular display
+#         table_data = []
+#         for idx, req in enumerate(cleaned_requests, 1):
+#             ingredient, quantity, unit, status, extra_1 = req
+#             table_data.append([f"{idx}", ingredient, quantity, unit, "Request"])
+
+#         # Table headers
+#         headers = ["ID", "Ingredient", "Quantity", "Unit", "Action"]
+
+#         # Display the table
+#         print(tabulate(table_data, headers=headers, tablefmt="grid"))
+
+#         # Ask user if they want to update or delete
+#         print("\nDo you want to update or delete any request? (yes/no)")
+#         choice = input().lower()
+
+#         if choice == "yes":
+#             # Ask for the number of the ingredient to update or delete
+#             print("Enter the number of the ingredient to update or delete (e.g., 1, 2, 3, ...):")
+#             try:
+#                 choice_number = int(input().strip())  # Convert the input to an integer
+#                 if choice_number < 1 or choice_number > len(cleaned_requests):
+#                     print(f"Invalid number. Please choose a number between 1 and {len(cleaned_requests)}.")
+#                     return
+                
+#                 # Get the selected ingredient by number
+#                 selected_ingredient = cleaned_requests[choice_number - 1]  # List is 0-indexed
+#                 ingredient, quantity, unit, status, extra_1 = selected_ingredient
+#                 print(f"Current details: {ingredient} - {quantity} {unit} - Status: {status}")
+
+#                 # Ask whether to update or delete
+#                 print("Would you like to update or delete this request? (update/delete):")
+#                 action_choice = input().lower()
+
+#                 if action_choice == "update":
+#                     # Ask for new quantity (and validate)
+#                     while True:
+#                         quantity_input = input("Enter quantity (e.g., '2kg', '1.5ltr', '10units'): ").strip()
+#                         quantity, unit = extract_quantity_and_unit(quantity_input)
+#                         if quantity is not None:
+#                             break
+#                         print("❌ Invalid input! Please enter a number followed by a unit (e.g., '2kg', '1.5ltr').")
+
+#                     # Ask for the ingredient type
+#                     ingredient_type = input("Enter ingredient type (e.g., vegetable, spice, dairy, meat): ").strip().lower()
+
+#                     # Ask for brand name
+#                     brand_name = input("Enter brand name (if any, else type 'none'): ").strip().title()
+
+#                     # Update the ingredient's quantity, unit, type, and brand name
+#                     cleaned_requests[choice_number - 1][1] = quantity
+#                     cleaned_requests[choice_number - 1][2] = unit
+#                     cleaned_requests[choice_number - 1][4] = f"{ingredient_type}, {brand_name}"
+#                     cleaned_requests[choice_number - 1][3] = "ok"  # Mark as updated/ok
+
+#                     print(f"Updated {ingredient} to {quantity} {unit}, type: {ingredient_type}, brand: {brand_name}.")
+
+#                     # Save the updated ingredient requests back to the file
+#                     with open(REQUEST_Ingredient, "w") as file:
+#                         for req in cleaned_requests:
+#                             file.write(",".join(req) + "\n")
+
+#                     # Update or add the ingredient to INGREDIENTS_FILE
+#                     with open(INGREDIENTS_FILE, "a") as ingredient_file:
+#                         # Check if ingredient already exists in INGREDIENTS_FILE
+#                         ingredient_file.write(f"I{choice_number},{ingredient},{quantity},{unit},{ingredient_type},{brand_name}\n")
+
+#                     print(f"Ingredient requests have been updated and uploaded to INGREDIENTS_FILE.")
+
+#                 elif action_choice == "delete":
+#                     # Delete the ingredient from the request list
+#                     cleaned_requests.pop(choice_number - 1)
+#                     print(f"Deleted {ingredient} from the request list.")
+
+#                     # Save the updated ingredient requests back to the file after deletion
+#                     with open(REQUEST_Ingredient, "w") as file:
+#                         for req in cleaned_requests:
+#                             file.write(",".join(req) + "\n")
+
+#                     print(f"Ingredient request has been deleted.")
+
+#                 else:
+#                     print("Invalid action. Please choose either 'update' or 'delete'.")
+
+#             except ValueError:
+#                 print("Invalid input. Please enter a valid number.")
+
+#     except FileNotFoundError:
+#         print("Ingredient request file not found.")
+
+
+def View_AND_Update_Ingredients_Requests_of_Chef():
+    """View and update ingredient requests for the chef in a tabular format."""
+    print("\n-------- Ingredient Requests --------")
+
+    try: 
+        with open(REQUEST_Ingredient, "r") as file:
+            ingredient_requests = [line.strip().split(",") for line in file.readlines()]
+
+        if not ingredient_requests:
+            print("No ingredient requests found.")
+            return
+        cleaned_requests = []
+        for req in ingredient_requests:
+            if len(req) == 3:   
+                req.extend(["N/A", ""])  
+            elif len(req) == 4:  
+                req.append("N/A")   
+            elif len(req) == 5:
+                pass  
+            else:
+                print(f"Warning: Skipping invalid line with {len(req)} values: {req}")
+                continue  
+            cleaned_requests.append(req)
+ 
+        table_data = []
+        for idx, req in enumerate(cleaned_requests, 1):
+            ingredient, quantity, unit, status, extra_1 = req
+            table_data.append([f"{idx}", ingredient, quantity, unit, "Request"])
+ 
+        headers = ["ID", "Ingredient", "Quantity", "Unit", "Action"]
+ 
+        print(tabulate(table_data, headers=headers, tablefmt="grid"))
+ 
+        print("\nDo you want to update or delete any request? (yes/no)")
+        choice = input().lower()
+
+        if choice == "yes": 
+            print("Enter the number of the ingredient to update or delete (e.g., 1, 2, 3, ...):")
+            try:
+                choice_number = int(input().strip())   
+                if choice_number < 1 or choice_number > len(cleaned_requests):
+                    print(f"Invalid number. Please choose a number between 1 and {len(cleaned_requests)}.")
+                    return
+                 
+                selected_ingredient = cleaned_requests[choice_number - 1]  # List is 0-indexed
+                ingredient, quantity, unit, status, extra_1 = selected_ingredient
+                print(f"Current details: {ingredient} - {quantity} {unit} - Status: {status}")
+ 
+                print("Would you like to update or delete this request? (update/delete):")
+                action_choice = input().lower()
+
+                if action_choice == "update":
+                    while True:
+                        quantity_input = input("Enter quantity (e.g., '2kg', '1.5ltr', '10units'): ").strip()
+                        quantity, unit = extract_quantity_and_unit(quantity_input)
+                        if quantity is not None:
+                            break
+                        print("❌ Invalid input! Please enter a number followed by a unit (e.g., '2kg', '1.5ltr').")
+ 
+                    ingredient_type = input("Enter ingredient type (e.g., vegetable, spice, dairy, meat): ").strip().lower()
+                    brand_name = input("Enter brand name (if any, else type 'none'): ").strip().title()
+                    cleaned_requests[choice_number - 1][1] = quantity
+                    cleaned_requests[choice_number - 1][2] = unit
+                    cleaned_requests[choice_number - 1][4] = f"{ingredient_type}, {brand_name}"
+                    cleaned_requests[choice_number - 1][3] = "ok"   
+
+                    print(f"Updated {ingredient} to {quantity} {unit}, type: {ingredient_type}, brand: {brand_name}.")
+                    with open(REQUEST_Ingredient, "w") as file:
+                        for req in cleaned_requests:
+                            file.write(",".join(req) + "\n")
+                    with open(INGREDIENTS_FILE, "a") as ingredient_file:
+                        ingredient_file.write(f"I{choice_number},{ingredient},{quantity},{unit},{ingredient_type},{brand_name}\n")
+
+                    print(f"Ingredient requests have been updated and uploaded to INGREDIENTS_FILE.")
+
+                elif action_choice == "delete":
+                    deleted_ingredient = cleaned_requests.pop(choice_number - 1)
+                    print(f"Deleted {deleted_ingredient[0]} from the request list.")
+                    with open(REQUEST_Ingredient, "w") as file:
+                        for req in cleaned_requests:
+                            file.write(",".join(req) + "\n")
+
+                    print(f"Ingredient request has been deleted.")
+
+                else:
+                    print("Invalid action. Please choose either 'update' or 'delete'.")
+
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
+
+    except FileNotFoundError:
+        print("Ingredient request file not found.")
+
+
+
 def update_ingredient():
     """Updates an ingredient's details after displaying them in a table format."""
     print("\n-------- Update Ingredient --------\n")
-
-    # Check if ingredients file exists and has content
     if not os.path.exists(INGREDIENTS_FILE) or os.stat(INGREDIENTS_FILE).st_size == 0:
         print("No ingredients found.")
         return
-
+    
     ingredient_list = []
-
-    # Read ingredients from the file
     with open(INGREDIENTS_FILE, "r") as f:
         for line in f:
-            ingredient_list.append(line.strip().split(","))  # Convert CSV to list
+            ingredient_list.append(line.strip().split(","))   
 
     if not ingredient_list:
         print("No ingredients found.")
         return
-
-    # Show ingredients in a table with indexes
+ 
     indexed_ingredients = [[i + 1] + ingredient for i, ingredient in enumerate(ingredient_list)]
     print(tabulate(indexed_ingredients, headers=["No.", "ID", "Name", "Quantity", "Type", "Brand"], tablefmt="grid"))
 
-    try:
-        # User selects the ingredient to update
+    try: 
         ingredient_index = int(input("\nEnter the number of the ingredient to update: ")) - 1
         if ingredient_index < 0 or ingredient_index >= len(ingredient_list):
             print("Invalid selection.")
-            return
-
-        # Get current ingredient details
+            return 
         current_ingredient = ingredient_list[ingredient_index]
-
-        # Ask the user for updates to the ingredient fields
+ 
         new_name = input(f"Enter new name ({current_ingredient[1]}): ").strip() or current_ingredient[1]
         new_quantity = input(f"Enter new quantity ({current_ingredient[2]}): ").strip() or current_ingredient[2]
         new_type = input(f"Enter new type ({current_ingredient[3]}): ").strip() or current_ingredient[3]
         new_brand = input(f"Enter new brand ({current_ingredient[4]}): ").strip() or current_ingredient[4]
-
-        # Update the ingredient in the list
+ 
         ingredient_list[ingredient_index] = [current_ingredient[0], new_name, new_quantity, new_type, new_brand]
-
-        # Write the updated list back to the file
+ 
         with open(INGREDIENTS_FILE, "w") as f:
             for ingredient in ingredient_list:
                 f.write(",".join(ingredient) + "\n")
@@ -678,47 +887,44 @@ def update_ingredient():
     except ValueError:
         print("Invalid input. Please enter a valid number.")
  
+
+
+
+
 def delete_ingredient():
     """Deletes an ingredient from the list after displaying it in a table format."""
     print("\n-------- Delete Ingredient --------\n")
-
-    # Check if ingredients file exists and has content
+ 
     if not os.path.exists(INGREDIENTS_FILE) or os.stat(INGREDIENTS_FILE).st_size == 0:
         print("No ingredients found.")
         return
 
     ingredient_list = []
-
-    # Read ingredients from the file
+ 
     with open(INGREDIENTS_FILE, "r") as f:
         for line in f:
-            ingredient_list.append(line.strip().split(","))  # Convert CSV to list
+            ingredient_list.append(line.strip().split(","))   
 
     if not ingredient_list:
         print("No ingredients found.")
         return
-
-    # Show ingredients in a numbered table
+ 
     indexed_ingredients = [[i + 1] + ingredient for i, ingredient in enumerate(ingredient_list)]
     print(tabulate(indexed_ingredients, headers=["No.", "ID", "Name", "Quantity", "Type", "Brand"], tablefmt="grid"))
 
-    try:
-        # User selects the ingredient to delete
+    try: 
         ingredient_index = int(input("\nEnter the number of the ingredient to delete: ")) - 1
         if ingredient_index < 0 or ingredient_index >= len(ingredient_list):
             print("Invalid selection.")
             return
-
-        # Confirm deletion
+ 
         confirm = input(f"Are you sure you want to delete '{ingredient_list[ingredient_index][1]}'? (y/n): ").strip().lower()
         if confirm != 'y':
             print("Ingredient deletion canceled.")
             return
-
-        # Delete the ingredient from the list
+ 
         deleted_ingredient = ingredient_list.pop(ingredient_index)
-
-        # Update the file with remaining ingredients
+ 
         with open(INGREDIENTS_FILE, "w") as f:
             for ingredient in ingredient_list:
                 f.write(",".join(ingredient) + "\n")
@@ -741,7 +947,7 @@ def validate_password(password):
 def validate_username(username, staff_list):
     """Ensure the new username is unique."""
     for staff in staff_list:
-        if staff[2] == username:  # staff[2] is the username field
+        if staff[2] == username:   
             return False
     return True
 
@@ -857,15 +1063,13 @@ def Update_own_profile():
 
     print("\n-------- Edit Your Profile: --------\n")
     staff_id, name, username, email, password, role = staff_to_edit
-
-    # Display current details
+ 
     print(f"\nCurrent Profile Details: ")
     print(f"Name: {name}")
     print(f"Username: {username}")
     print(f"Email: {email}")
     print(f"Role: {role}")
-    
-    # Ask for updates
+     
     is_update_name = input("Do you want to update your name (y/n): ").strip().lower()
     if is_update_name == "y":
         name = input("Enter new name: ")
@@ -906,8 +1110,7 @@ def Update_own_profile():
 
     print("\nProfile updated successfully.")
 
-
-# def Update_own_profile():
+ 
     if not os.path.exists(LOGIN_USER_DATA):
         print("You are not logged in.")
         return
