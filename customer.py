@@ -8,12 +8,6 @@ LOGIN_USER_DATA = os.path.join("cookies", "login_User_data.txt")
 USER_FILE_Data = os.path.join("database", "users_data.txt")
 from OurRestaurant import main
 
-
-# def clear_screen():
-#     """Clears the terminal screen."""
-#     os.system("cls" if os.name == "nt" else "clear")
-
-# Customer menu
 def customer_menu():
     while True:
         print("\nCustomer Menu:")
@@ -40,19 +34,18 @@ def customer_menu():
 def view_menu():
     print("\nMenu:")
     menu_items = [] 
-    with open(MENU_FILE, "r") as f:
+    with open(MENU_FILE, "r") as f: # file open for reading only 
         for index, line in enumerate(f, start=1):
             item_details = line.strip().split(",")    
             if len(item_details) == 4:
                 item_id, item_name, item_price, item_category = item_details
-                menu_items.append([index, item_id, item_name, item_price, item_category])  # Add details as a row
+                menu_items.append([index, item_id, item_name, item_price, item_category])  # append() method adds an item to the end of the list.
             else:
                 print(f"Skipping invalid line (line {index}): {line.strip()}")
     print(tabulate(menu_items, headers=["No.", "Item ID", "Item Name", "Price", "Category"], tablefmt="grid"))
 view_menu()
 
 
-# Place order
 def order():
     print("\n-------- Order Menu: --------:")
     print("1. Place Order")
@@ -86,68 +79,15 @@ def get_customer_name():
         print("Login data file not found.")
         return None
 
-
-# def place_order():
-#     print("\n-------- Place Order --------\n")
-#     menu_items = []
-    
-#     # Read menu items from the MENU_FILE
-#     with open(MENU_FILE, "r") as f:
-#         for index, line in enumerate(f, start=1):
-#             item_details = line.strip().split(",")  
-#             menu_items.append(item_details)
-    
-#     # Display the menu
-#     table_data = [[index+1, item[0], item[1], item[2]] for index, item in enumerate(menu_items)]
-#     print(tabulate(table_data, headers=["No.", "Item ID", "Item Name", "Price", "Category"], tablefmt="grid"))
-    
-#     # Get the customer name and role from login data
-#     customer_name, role = get_customer_name_and_role()
-#     if not customer_name:
-#         print("No customer name found in login data.")
-#         return
-    
-#     continue_ordering = True
-
-#     while continue_ordering:
-#         try:
-#             # Ask the customer to select an item by its menu number
-#             item_number = int(input("\nEnter the menu number of the item you want to order: ")) - 1  # Select item by its number
-#             if item_number < 0 or item_number >= len(menu_items):
-#                 print("Invalid selection. Please choose a valid number from the menu.")
-#                 continue
-
-#             # Fetch item details
-#             selected_item_name = menu_items[item_number][1]  # Item Name
-#             selected_item_price = menu_items[item_number][2]  # Item Price
-#             selected_item_category = menu_items[item_number][3]  # Item Category
-#             item_id = menu_items[item_number][0]  # Item ID
-            
-#             # Save the order to the orders file with customer name and role, but not the password
-#             with open(ORDERS_FILE, "a") as f:
-#                 f.write(f"{customer_name},{role},{item_id},{selected_item_name},{selected_item_price},{selected_item_category},Pending\n")
-            
-#             print(f"Order placed successfully for {selected_item_name}!")
-
-#             # Ask if the customer wants to order more items
-#             another_order = input("\nDo you want to place another order? (y/n): ").strip().lower()
-#             if another_order != 'y':
-#                 continue_ordering = False
-#                 print("Your order has been completed.")
-        
-#         except ValueError:
-#             print("Invalid input. Please enter a valid number.")
-
+ 
 def place_order():
     print("\n-------- Place Order --------\n")
     menu_items = []
-    
     # Read menu items from the MENU_FILE
     with open(MENU_FILE, "r") as f:
         for index, line in enumerate(f, start=1):
             item_details = line.strip().split(",")  
             menu_items.append(item_details)
-    
     # Display the menu
     table_data = [[index+1, item[0], item[1], item[2]] for index, item in enumerate(menu_items)]
     print(tabulate(table_data, headers=["No.", "Item ID", "Item Name", "Price", "Category"], tablefmt="grid"))
@@ -222,101 +162,67 @@ def get_customer_name_and_role():
         print("Login data not found.")
         return None, None
 
- 
 
 def order_cancel():
     print("\n-------- Cancel Order --------\n")
-     
-    with open(ORDERS_FILE, "r") as f:
-        orders = f.readlines()
     
-    if not orders:
+    order_list = []
+    with open(ORDERS_FILE, "r") as f:
+        for line in f:
+            order_list.append(line.strip().split(","))  
+    
+    if not order_list:
         print("No orders found.")
         return
      
-    table_data = []
-    for i, order in enumerate(orders):
-        order_data = order.strip().split(",") 
-        table_data.append([i + 1, order_data[3], order_data[4], order_data[5], order_data[6], order_data[8]])
- 
-    print(tabulate(table_data, headers=["No.", "Item", "Price", "Category", "Num of order", "Status"], tablefmt="grid"))
+    logged_in_user = get_logged_in_user()
     
-    try: 
-        order_index = int(input("Enter the number of the order to cancel: ")) - 1
-        if order_index < 0 or order_index >= len(orders):
-            print("Invalid selection.")
-            return 
-        order_data = orders[order_index].strip().split(",")
-        status = order_data[8]
-         
-        if status.lower() != "pending":
-            print("Only orders with 'Pending' status can be cancelled.")
-            return
-         
-        is_cancelled = input("Are you sure you want to cancel this order? (yes/no): ").lower() == "yes"
+    if not logged_in_user:
+        print("No logged-in user found.")
+        return
+     
+    user_orders = [order for order in order_list if order[0] == logged_in_user]
+    
+    if not user_orders:
+        print(f"No orders found for {logged_in_user}.")
+        return
+    
+    while True:
+        print(f"\nCurrent Orders for {logged_in_user}:")
+        table_data = []
+        for i, order in enumerate(user_orders): 
+            table_data.append([i + 1, order[3], order[4], order[5], order[6], order[8], order[7]])  # Corrected fields
+        print(tabulate(table_data, headers=["No.", "Item", "Price", "Category", "Num of order", "Status", "Total Price"], tablefmt="grid"))
         
-        if is_cancelled: 
-            orders.pop(order_index)
+        try:
+            order_index = int(input("Enter the number of the order to cancel: ")) - 1  # Get the order index
+            if order_index < 0 or order_index >= len(user_orders):
+                print("Invalid selection.")
+                continue
 
-            with open(ORDERS_FILE, "w") as f:
-                f.writelines(orders)
+            selected_order = user_orders[order_index]
+            print(f"Current order details: Item: {selected_order[3]}, Price: {selected_order[4]}, Category: {selected_order[5]}, Status: {selected_order[7]}")
             
-            print("Order cancelled successfully.")
-        else:
-            print("Order not cancelled.")
-    except ValueError:
-        print("Invalid input. Please enter a valid number.")
-
-
-# def View_All_Orders():
-#     logged_in_user = get_logged_in_user()
-    
-#     if not logged_in_user:
-#         print("No logged-in user found.")
-#         return
-    
-#     print("\nOrder Status:\n")
-    
-#     # Read orders from the ORDERS_FILE
-#     with open(ORDERS_FILE, "r") as f:
-#         orders = f.readlines()
-#         if not orders:
-#             print("No orders found.")
-#             return
-        
-#         # Prepare the data for the table
-#         table_data = []
-#         total_price = 0  # Initialize total price
-        
-#         for i, order in enumerate(orders):
-#             order_data = order.strip().split(",")
-            
-#             # Ensure the order data has 9 relevant fields (corrected from 8 to match saved data format)
-#             if len(order_data) == 9:  # 9 because it's in the format: customer_name, role, item_id, item_name, price, category, quantity, total_price, status
-#                 customer_name = order_data[0]
-#                 role = order_data[1]
-#                 item_name = order_data[3]
-#                 item_price = float(order_data[4])  # Convert price to float for calculation
-#                 item_category = order_data[5]
-#                 quantity = int(order_data[6])  # Quantity of items ordered
-#                 total_item_price = float(order_data[7])  # Total price for the ordered quantity
-#                 status = order_data[8]
+            confirm_cancel = input("Are you sure you want to cancel this order (y/n): ").strip().lower()
+            if confirm_cancel == "y":  
+                order_list.remove(selected_order)
+                 
+                with open(ORDERS_FILE, "w") as f:
+                    for order in order_list:
+                        f.write(",".join(order) + "\n")
                 
-#                 # Only show orders of the logged-in user
-#                 if customer_name == logged_in_user:
-#                     table_data.append([i + 1, customer_name,  item_name, item_price, item_category, quantity, total_item_price, status])
-#                     total_price += total_item_price  # Add the total item price to the total price
-#             else:
-#                 print(f"Skipping malformed order (line {i + 1}): {order.strip()}")
-        
-#         # If there are valid orders, display them in a table format using tabulate
-#         if table_data:
-#             print(tabulate(table_data, headers=["No.", "Customer Name",  "Item Name", "Price", "Category", "Quantity", "Total Price", "Status"], tablefmt="grid"))
-#             print(f"\nTotal Price: Rs {total_price:.2f}")
-#         else:
-#             print(f"No orders found for {logged_in_user}.")
+                print("Order canceled successfully.")
+            else:
+                print("Order not canceled.")
+             
+            another_cancel = input("Do you want to cancel another order (y/n): ").strip().lower()
+            if another_cancel != "y":  
+                print("Redirecting to the main menu...")
+                break   
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
 
-
+ 
 def View_All_Orders():
     logged_in_user = get_logged_in_user()
     
@@ -381,8 +287,7 @@ def get_logged_in_user():
 
 def update_order():
     print("\n-------- Update Order --------\n")
-    
-    # Read orders from the ORDERS_FILE
+     
     order_list = []
     with open(ORDERS_FILE, "r") as f:
         for line in f:
@@ -488,9 +393,7 @@ def send_feedback():
         print(f"Error saving feedback: {e}")
 
 # ###############################################
- 
-
- 
+  
 def validate_username(new_username, staff_list):
     """Validate if the username already exists in the staff list."""
     for staff in staff_list:

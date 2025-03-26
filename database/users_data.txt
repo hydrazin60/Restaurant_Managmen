@@ -2,3 +2,4 @@
 3,shristi tmelsina,shristy77,shristy@gmail.com,password,Customer
 4,Nisan khadka,nisan30,nisankhadka@gmail.com,password,Customer
 5,Richa,richadulal,Richa12@gmail.com,Richa123,Customer
+6,dev,edv,@password@,password,Customer

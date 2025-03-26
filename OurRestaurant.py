@@ -6,6 +6,7 @@ Cookies_FILE = "./cookies"
 USER_FILE = os.path.join(DATA_DIRECTORY, "users_data.txt")
 STAFF_FILE = os.path.join(DATA_DIRECTORY,  "staff_data.txt")
 LOGIN_USER_DATA = os.path.join(Cookies_FILE, "login_User_data.txt")
+
 def initialize_files():
     if not os.path.exists(DATA_DIRECTORY):
         os.makedirs(DATA_DIRECTORY)
@@ -20,7 +21,7 @@ def get_next_user_id(file_path):
     if not os.path.exists(file_path):
         return 100   
     with open(file_path, "r") as f:
-        lines = [line.strip() for line in f.readlines() if line.strip()]  
+        lines = [line.strip() for line in f.readlines() if line.strip()]   # list comprehension
     if not lines:
         return 100   
     last_line = lines[-1]  
